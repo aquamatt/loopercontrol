@@ -11,8 +11,8 @@ from utils import Intervals
 
 LOOPER_ADDR = "localhost"
 LOOPER_PORT = 9951
-NUM_LOOPS = 3
-DOUBLE_TAP_INTERVAL = 0.08   # seconds
+NUM_LOOPS = 2
+DOUBLE_TAP_INTERVAL = 0.10   # seconds
 LONG_PRESS_INTERVAL = 0.5    # seconds
 
 
@@ -134,17 +134,17 @@ def on_release(key):
 
 def handle_double_SPACE():
     """
-    Stop playback. The first tap of the double tap would, if playback was
-    the prior state, have started recording/overdubbing. We therefore stop
-    that and discard the fraction of a second long layer first before
-    pausing everything.
+    Stop playback of selected loop. The first tap of the double tap would, if
+    playback was the prior state, have started recording/overdubbing. We
+    therefore stop that and discard the fraction of a second long layer first
+    before pausing everything.
 
     If recording/overdubbing was happening prior to the double tap, the first
     tap would have stopped that, and this will only pause everything, retaining
     the layer that we had intentionally recorded.
     """
     looper.selected.stop_record_and_discard()
-    looper.toggle_pause_all()
+    looper.selected.pause()
 
 def handle_SPACE():
     """
@@ -175,12 +175,6 @@ def handle_q():
     flush_keys()
     set_echo()
     sys.exit(0)
-
-
-#with keyboard.Listener(
-#        on_press=on_press,
-#        on_release=on_release) as listener:
-#    listener.join()
 
 keyboard.Listener(
     on_press=on_press,

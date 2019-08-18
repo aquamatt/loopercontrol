@@ -9,7 +9,7 @@ from osc4py3.as_eventloop import *
 
 
 MINIMUM_LOOP_DURATION = 60 # seconds
-DEBUG = False
+DEBUG = True
 
 class Channel(object):
     """
@@ -280,8 +280,13 @@ class Loop(object):
     def __init__(self, looper=None, loop_index=0):
         self.index = loop_index
         self.looper = looper
-        self.undo_levels = 0
-        self.redo_available = False
+
+        # Track layers almost entirely so as to know when we've got to the
+        # first layer so that we can undo that with an 'undo_all' and get
+        # expected behaviour which you don't get by issuing a 'hit' on that
+        # base layer.
+        self.current_layer = 0
+        self.layers = 0
 
         # this assumes a brand new Loop...
         self.state = self.WAIT
@@ -296,16 +301,14 @@ class Loop(object):
         if DEBUG:
             print("PRO: Enter state: {}".format(self.state))
         if self.state == self.WAIT:
-            self.looper.channel.record(self.index)
-            self.state = self.RECORDING
+            self.record()
 
         elif self.state == self.PAUSED:
             self.looper.channel.trigger(self.index)
             self.state = self.PLAYBACK
 
         elif self.state in [self.PLAYBACK, self.PAUSED]:
-            self.looper.channel.overdub(self.index)
-            self.state = self.OVERDUBBING
+            self.overdub()
 
         elif self.state == self.RECORDING:
             self.looper.channel.record(self.index)
@@ -315,36 +318,47 @@ class Loop(object):
             self.looper.channel.overdub(self.index)
             self.state = self.PLAYBACK
 
-
     def record(self):
         self.looper.channel.record(self.index)
         self.state = self.RECORDING
-        self.undo_levels += 1
+        self.current_layer = self.layers = 1
+
+    def overdub(self):
+        self.looper.channel.overdub(self.index)
+        self.state = self.OVERDUBBING
+        self.current_layer += 1
+        self.layers = self.current_layer
+
+    def pause(self):
+        self.looper.channel.pause(self.index)
+        self.state = self.PAUSED
 
     def undo_all(self):
         self.looper.channel.undo_all(self.index)
         self.state = self.WAIT
-        self.undo_levels = 0
-        self.redo_available = False
+        self.current_layer = 0
 
     def undo(self):
         self.looper.channel.undo(self.index)
-        if self.undo_levels > 0:
-            self.undo_levels -= 1
-            self.redo_available = True
+        if self.current_layer > 0:
+            current = self.current_layer
+            new = current - 1
+            self.current_layer = new if current > 0 else 0
+
+            # SooperLooper doesn't undo the base layer when you call 'undo',
+            # only subsequent layers, so this implements that
+            if new == 0:
+                self.undo_all()
 
     def redo(self):
-        self.looper.channel.redo(self.index)
-
-        # think this is prone to bugs. Is there only one redo level?
-        # if not, we have to keep track of how many there are!
-        if self.redo_available:
-            self.undo_levels += 1
-            self.redo_available = False
+        if self.current_layer < self.layers:
+            self.looper.channel.redo(self.index)
+            self.current_layer += 1
+            self.state = Loop.PLAYBACK
 
     def toggle_pause(self):
         self.looper.channel.pause(self.index)
-        self.state = \
+        relf.state = \
             self.PLAYBACK if self.state == self.PAUSED else self.PAUSED
 
     def stop_record_and_discard(self):
