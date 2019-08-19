@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import optfn
 
-from commands import CommandSet
 from kbd import InputHandler
 from looper import *
 import settings
@@ -39,8 +38,7 @@ def cli_handler(host="localhost", port=9951,
     --host=<host>            - host running SooperLooper (default: localhost)
     --port=<port>            - SooperLooper port (default: 9951)
     --loops=<n>              - Number of loops to start (default: 2)
-
-    Output is sent to /tmp/ptrh.[out|err]
+    --help -h                - Show this help
     """
 
     # ensure type is correct here
