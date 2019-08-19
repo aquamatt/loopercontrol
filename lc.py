@@ -4,6 +4,8 @@ import optfn
 from commands import CommandSet
 from kbd import InputHandler
 from looper import *
+import settings
+from utils import get_class_from_string
 
 
 def run_controller(host, port, nloops):
@@ -21,15 +23,14 @@ def run_controller(host, port, nloops):
         looper.add_loop(loop, True if i == 0 else False)
         time.sleep(0.1)
 
-    command_set = CommandSet(looper)
-    handler = InputHandler(command_set)
+    command_set = get_class_from_string(settings.COMMAND_SET)(looper)
+    handler = get_class_from_string(settings.INPUT_HANDLER)(command_set)
 
     handler.start()
 
 
 def cli_handler(host="localhost", port=9951,
                 loops=2):
-
     """
     Use:
 

@@ -5,20 +5,25 @@ import sys
 from pynput import keyboard
 
 from utils import Intervals
+from looper import BaseInputHandler
 
-class InputHandler(object):
+
+class InputHandler(BaseInputHandler):
 
     DOUBLE_TAP_INTERVAL = 0.10   # seconds
     LONG_PRESS_INTERVAL = 0.5    # seconds
 
 
     def __init__(self, command_set):
+        super().__init__(command_set)
         self.timer = Intervals()
         self.q = Queue()
-        self.command_set = command_set
-        self.command_set.handler = self
 
     def start(self):
+        """
+        Enter event loop, waiting for and acting upon key presses.
+        This will block for ever.
+        """
         keyboard.Listener(
             on_press=self.on_press,
             on_release=self.on_release).start()

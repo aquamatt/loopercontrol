@@ -1,27 +1,6 @@
-import settings
+import sys
 
-
-class BaseCommandSet(object):
-    def __init__(self, looper, input_handler=None):
-        self.handler = input_handler
-        self.looper = looper
-
-        fns = type(self).__dict__
-        self.commands = {k: v
-                         for (k, v) in fns.items() if k.startswith("handle_")}
-        if settings.DEBUG:
-            print("Commands: \n : {}".format("\n : ".join(self.commands.keys())))
-
-    def handle(self, command):
-        """
-        Execute function handler for given command if available
-        """
-        fn = "handle_{}".format(command)
-        try:
-            self.commands[fn](self)
-        except KeyError:
-            if settings.DEBUG:
-                print("Could not find command: {}".format(command))
+from looper import BaseCommandSet
 
 
 class CommandSet(BaseCommandSet):

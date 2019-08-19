@@ -1,3 +1,4 @@
+import importlib
 import time
 
 
@@ -51,3 +52,7 @@ class Intervals(object):
         self.start = self._ignore_start
 
 
+def get_class_from_string(classpath):
+    module_name, klass = classpath.rsplit(".", 1)
+    Klass = getattr(importlib.import_module(module_name), klass)
+    return Klass
