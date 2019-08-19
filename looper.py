@@ -7,9 +7,10 @@ from osc4py3 import oscbuildparse
 from osc4py3.as_eventloop import *
 #from osc4py3.as_allthreads import *
 
+import settings
+
 
 MINIMUM_LOOP_DURATION = 60 # seconds
-DEBUG = True
 
 class Channel(object):
     """
@@ -28,7 +29,7 @@ class Channel(object):
         msg = oscbuildparse.OSCMessage(address, formatter, args)
         osc_send(msg, "SooperLooper")
         osc_process()
-        if DEBUG:
+        if settings.DEBUG:
             print("{} {} {}".format(address, formatter, args))
 
     def _send_hit(self, command, loop=-3):
@@ -75,7 +76,7 @@ class Channel(object):
                                          ",s", ["pause"]
                                          )
                 )
-            if DEBUG:
+            if settings.DEBUG:
                 print(">> {} {} {}".format("/sl/{}/hit".format(loop.index), ",s", ["pause"]))
 
         bundle = oscbuildparse.OSCBundle(oscbuildparse.OSC_IMMEDIATELY, msgs)
@@ -145,7 +146,7 @@ class Channel(object):
                                            ",sf",
                                            [command, value])
             messages.append(msg)
-            if DEBUG:
+            if settings.DEBUG:
                 print(">> {} {} {}".format("/sl/{}/set".format(loop), ",sf", [command, value]))
 
         if messages:
@@ -298,7 +299,7 @@ class Loop(object):
         self.looper.select_loop(self)
 
     def play_record_or_overdub(self):
-        if DEBUG:
+        if settings.DEBUG:
             print("PRO: Enter state: {}".format(self.state))
         if self.state == self.WAIT:
             self.record()
