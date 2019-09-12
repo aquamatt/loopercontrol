@@ -11,7 +11,7 @@ import settings
 
 
 MINIMUM_LOOP_DURATION = 60 # seconds
-
+MONO, STEREO = (1, 2)
 
 class BaseCommandSet(object):
     """
@@ -162,11 +162,13 @@ class Channel(object):
         """
         self._send_global_set("selected_loop_num", index)
 
-    def add_loop(self):
+    def add_loop(self, channels=MONO):
         """
         Add loop to SooperLooper
         """
-        self._send("/loop_add", ",if", [1, MINIMUM_LOOP_DURATION])
+        if channels not in [MONO, STEREO]:
+            raise Exception("Can only have 1 or 2 channels on a loop")
+        self._send("/loop_add", ",if", [channels, MINIMUM_LOOP_DURATION])
 
     def set_sync_source(self, loop=0):
         """
@@ -224,34 +226,39 @@ class Looper(object):
         # used to store loops that have been group paused
         self.group_pause_cache = None
 
-    def add_loop(self, loop, master=False):
+    def add_loop(self, loop, channels=MONO, master=False, create=True):
         """
         Master loop is the one which will be considered the sync source
+
+        If `create` == True, send instruction to SooperLooper to create
+        the loop, otherwise just create entry here (for use if binding
+        to existing looper setup)
         """
         loop.looper = self
         loop.index = len(self.loops)
         self.loops.append(loop)
 
-        self.channel.add_loop()
         if loop.index == self.selected_loop:
             self.select_loop(loop)
 
-        # without out this tiny pause the Looper will not have setup the loop
-        # and so the setting of properties will fail as there's no loop on
-        # which to set them...
-        # It could be shorter, but we'll try and play safe.
-        time.sleep(0.05)
+        if create:
+            self.channel.add_loop(channels)
+            # without out this tiny pause the Looper will not have setup the loop
+            # and so the setting of properties will fail as there's no loop on
+            # which to set them...
+            # It could be shorter, but we'll try and play safe.
+            time.sleep(0.05)
 
-        if master:
-            self.channel.set_properties(
-                dict(sync=0, playback_sync=0, quantize=3),
-                loop.index)
-            self.channel.set_sync_source(loop.index)
-        else:
-            self.channel.set_properties(
-                dict(sync=1, playback_sync=1, quantize=3),
-                loop.index
-                )
+            if master:
+                self.channel.set_properties(
+                    dict(sync=0, playback_sync=0, quantize=3),
+                    loop.index)
+                self.channel.set_sync_source(loop.index)
+            else:
+                self.channel.set_properties(
+                    dict(sync=1, playback_sync=1, quantize=3),
+                    loop.index
+                    )
 
     @property
     def selected(self):
