@@ -36,6 +36,12 @@ class KeyCommandSet(BaseCommandSet):
     def handle_U(self):
         self.looper.selected.undo_all()
 
+    def handle_z(self):
+        """
+        As "U" but easier to hit when using keyboard with feet :D
+        """
+        self.looper.selected.undo_all()
+
     def handle_u(self):
         self.looper.selected.undo()
 
