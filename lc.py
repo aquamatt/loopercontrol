@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import optfn
 
-from kbd import InputHandler
 from looper import *
 import settings
 from utils import get_class_from_string

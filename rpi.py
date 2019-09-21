@@ -5,7 +5,7 @@ switches)
 Issues and features to consider:
 
     * de-bouncing is a problem. On my test momentary switch, the release
-    * generates GPIO.RISING events even with a 0.1uF capacitor. Maybe
+    * generates GPIO.FALLING events even with a 0.1uF capacitor. Maybe
       try bigger capacitor? Different mix of capacitor and software
       debounce?
     * implement timer, as per keyboard input handler, for:
@@ -39,12 +39,15 @@ class InputHandler(BaseInputHandler):
         to come.
 
         Can't yet do double taps.
+
+        Configured with pull-up on the pin keeping it high. When switch closes,
+        it should go to ground.
         """
         idx = 0
         for channel in settings.SWITCH_CHANNELS:
-            GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+            GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.add_event_detect(channel,
-                                  GPIO.RISING,
+                                  GPIO.FALLING,
                                   callback=self.handle_press,
                                   bouncetime=200)
             self.channel_map[channel] = idx
