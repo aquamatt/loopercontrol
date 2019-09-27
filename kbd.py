@@ -5,7 +5,7 @@ import sys
 from pynput import keyboard
 
 from utils import Intervals
-from looper import BaseInputHandler
+from base import BaseInputHandler
 
 
 class InputHandler(BaseInputHandler):

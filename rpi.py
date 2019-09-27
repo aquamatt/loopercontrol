@@ -18,7 +18,7 @@ from queue import Queue
 
 import RPi.GPIO as GPIO
 
-from looper import BaseInputHandler
+from base import BaseInputHandler
 import settings
 
 

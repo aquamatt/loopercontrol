@@ -1,6 +1,6 @@
 import sys
 
-from looper import BaseCommandSet
+from base import BaseCommandSet
 
 
 class KeyCommandSet(BaseCommandSet):
