@@ -11,3 +11,13 @@ INPUT_HANDLER = "kbd.InputHandler"
 # RPi switch settings
 # list of GPIO inputs to map to switches 0..n
 SWITCH_CHANNELS = [36]
+
+
+# import local settings from the (gitignored) local.py
+# If it doesn't exist, that's fine.
+try:
+    from local import *
+    print("Local settings imported.")
+except ImportError:
+    print("No local settings.")
+
