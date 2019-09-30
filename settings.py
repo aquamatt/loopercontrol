@@ -1,4 +1,4 @@
-DEBUG=True
+DEBUG=False
 
 # For keyboard input
 COMMAND_SET = "commands.KeyCommandSet"

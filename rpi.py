@@ -65,5 +65,8 @@ class InputHandler(BaseInputHandler):
         # convert channel to logical switch number (zero indexed)
         switch = self.channel_map[channel]
 
+        if settings.DEBUG:
+            print("Callback for channel/switch {}/{}".format(channel, switch))
+
         # call appropriate command
         self.q.put(switch)
