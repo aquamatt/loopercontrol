@@ -45,6 +45,13 @@ class Intervals(object):
         self.IN_FRAME = False
         return delta
 
+    def lap(self):
+        """
+        Return interval since last update. Resets `last` timestamp, but
+        does not reset IN_FRAME.
+        """
+        return self._get_delta()
+
     def ignore_next(self):
         """
         Ignore the next start command, but return cached delta

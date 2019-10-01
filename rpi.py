@@ -9,8 +9,9 @@ Issues and features to consider:
       try bigger capacitor? Different mix of capacitor and software
       debounce?
     * implement timer, as per keyboard input handler, for:
-      - double tap
-      - long press
+      - [x] double tap
+      - [ ] long press - see if trap FALLING and RISING with soft debounce
+        is reliable. If so, can implement long-press options.
     * may need to implement handler for latching switches, but not until
       the need arises
 """
@@ -19,6 +20,7 @@ from queue import Queue
 import RPi.GPIO as GPIO
 
 from base import BaseInputHandler
+from utils import Intervals
 import settings
 
 
@@ -30,6 +32,7 @@ class InputHandler(BaseInputHandler):
         super().__init__(command_set)
         self.q = Queue()
         self.channel_map = {}
+        self.timer = Intervals()
 
     def start(self):
         """
@@ -49,7 +52,7 @@ class InputHandler(BaseInputHandler):
             GPIO.add_event_detect(channel,
                                   GPIO.FALLING,
                                   callback=self.handle_press,
-                                  bouncetime=200)
+                                  bouncetime=settings.GPIO_DEBOUNCE_DELAY)
             self.channel_map[channel] = idx
             idx += 1
 
@@ -65,8 +68,13 @@ class InputHandler(BaseInputHandler):
         # convert channel to logical switch number (zero indexed)
         switch = self.channel_map[channel]
 
+        if self.timer.lap() <= settings.DOUBLE_TAP_INTERVAL:
+            prefix = "double_"
+        else:
+            prefix = ""
+
         if settings.DEBUG:
             print("Callback for channel/switch {}/{}".format(channel, switch))
 
         # call appropriate command
-        self.q.put(switch)
+        self.q.put_nowait("{}{}".format(prefix, switch))

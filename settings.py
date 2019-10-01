@@ -11,6 +11,10 @@ INPUT_HANDLER = "kbd.InputHandler"
 # RPi switch settings
 # list of GPIO inputs to map to switches 0..n
 SWITCH_CHANNELS = [36]
+GPIO_DEBOUNCE_DELAY = 200 # ms
+# maximum time between taps to count as a double tap
+# lower bound is effectively determined by GPIO_DEBOUNCE_DELAY
+DOUBLE_TAP_INTERVAL = 0.500 # seconds
 
 
 # import local settings from the (gitignored) local.py
