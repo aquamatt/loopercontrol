@@ -26,7 +26,6 @@ class BridgeInputHandler(BaseInputHandler):
         while(True):
             bytesAddressPair = self.socket.recvfrom(BUFFER_SIZE)
             command = bytesAddressPair[0].decode()
-            # address = bytesAddressPair[1]
 
             if settings.DEBUG:
                 print("Message received over bridge: {}".format(command))

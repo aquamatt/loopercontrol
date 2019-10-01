@@ -1,8 +1,9 @@
 DEBUG=False
 
 # For keyboard input RECEIVED over UDP bridge
-COMMAND_SET = "commands.KeyCommandSet"
+#COMMAND_SET = "commands.KeyCommandSet"
 #INPUT_HANDLER = "kbd.InputHandler"
+COMMAND_SET = "midi.MidiCommandSet"
 INPUT_HANDLER = "bridge.BridgeInputHandler"
 
 
