@@ -1,9 +1,5 @@
 DEBUG=False
 
-# For the pedal board
-#COMMAND_SET = "commands.StompCommandSet"
-#INPUT_HANDLER = "rpi.InputHandler"
-
 CONFIG_SETS = {
     "default": {
         "doc": "Keyboard and OSC looper controller",
