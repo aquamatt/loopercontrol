@@ -59,7 +59,7 @@ class StompCommandSet(BaseCommandSet):
     def handle_0(self):
         self.looper.selected.play_record_or_overdub()
 
-    def handle_double_0(self):
+    def handle_double_0_DISABLE(self):
         """
         Stop playback of selected loop. The first tap of the double tap would,
         if playback was the prior state, have started recording/overdubbing. We
