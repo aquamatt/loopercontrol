@@ -83,7 +83,7 @@ def cli_handler(host="localhost", port=9951, stereo=False,
     port = int(port)
     loops = int(loops)
     if udp_host is not None:
-        settings.UDP_IP_ADDRESS = udp_host
+        settings.UDP_HOST = udp_host
     setup = not nosetup
     set_config(config)
     run_controller(host, port, setup, loops, 2 if stereo else 1)

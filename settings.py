@@ -47,7 +47,7 @@ GPIO_DEBOUNCE_DELAY = 200 # ms
 DOUBLE_TAP_INTERVAL = 0.500 # seconds
 
 # Network bridge mode
-UDP_IP_ADDRESS = "127.0.0.1"
+UDP_HOST = "127.0.0.1"
 UDP_PORT = 21974
 
 # import local settings from the (gitignored) local.py

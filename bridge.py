@@ -17,7 +17,7 @@ def _create_socket():
         family=socket.AF_INET,
         type=socket.SOCK_DGRAM)
 
-    host = getattr(settings, "UDP_IP_ADDRESS", "127.0.0.1")
+    host = getattr(settings, "UDP_HOST", "127.0.0.1")
     port = getattr(settings, "UDP_PORT", 21974)
     if settings.DEBUG:
         print("UDP connection on {}:{}".format(host, port))
