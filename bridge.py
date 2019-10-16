@@ -9,18 +9,29 @@ import settings
 BUFFER_SIZE = 256
 
 
+def _create_socket():
+    """
+    Setup UDP socket
+    """
+    _socket = socket.socket(
+        family=socket.AF_INET,
+        type=socket.SOCK_DGRAM)
+
+    host = getattr(settings, "UDP_IP_ADDRESS", "127.0.0.1")
+    port = getattr(settings, "UDP_PORT", 21974)
+    if settings.DEBUG:
+        print("UDP connection on {}:{}".format(host, port))
+
+    return _socket, host, port
+
+
 class BridgeInputHandler(BaseInputHandler):
     """
     An input handler that listens for commands sent over as UDP
     datagrams. Reflected into the supplied commandset.
     """
     def start(self):
-        self.socket = socket.socket(
-            family=socket.AF_INET,
-            type=socket.SOCK_DGRAM)
-
-        host = getattr(settings, "UDP_IP_ADDRESS", "127.0.0.1")
-        port = getattr(settings, "UDP_PORT", 21974)
+        self.socket, host, port = _create_socket()
         self.socket.bind((host, port))
 
         while(True):
@@ -40,12 +51,7 @@ class BridgeCommandSet(BaseCommandSet):
     def __init__(self, *args, **kwargs):
         # as we're a bridge we don't need to do the initialisation in
         # the base class
-        self.socket = socket.socket(
-            family=socket.AF_INET,
-            type=socket.SOCK_DGRAM)
-
-        host = getattr(settings, "UDP_IP_ADDRESS", "127.0.0.1")
-        port = getattr(settings, "UDP_PORT", 21974)
+        self.socket, host, port = _create_socket()
         self.address = (host, port)
 
     def handle(self, command):

@@ -11,12 +11,14 @@ def run_controller(host, port, setup, nloops, channels_per_loop):
     """
     Initialise and run the SooperLooper controller
     """
-    channel = Channel(host, port)
 
+    # @todo: this is a hangover from early days when this only controlled
+    # SooperLooper and only via OSC. Could refactor this elsewhere.
+    channel = Channel(host, port)
     looper = Looper(channel)
+
     # setup loops in SooperLooper
     # don't call this if you want to bind to already setup instance
-
     if setup:
         channel.clear_loops()
 
@@ -54,7 +56,8 @@ def show_configs():
 
 
 def cli_handler(host="localhost", port=9951, stereo=False,
-                loops=2, nosetup=False, config="default", show_config=False):
+                loops=2, nosetup=False, config="default",
+                udp_host=None, show_config=False):
     """
     Use:
 
@@ -63,6 +66,8 @@ def cli_handler(host="localhost", port=9951, stereo=False,
     --host=<host>            - host running SooperLooper (default: localhost)
     --port=<port>            - SooperLooper port (default: 9951)
     --loops=<n>              - Number of loops to start (default: 2)
+    --udp_host=<host>        - UDP host address to connect/bind to (default
+                               in settings)
     --stero                  - Set if stereo is to be selected
     --nosetup                - Do not re-configure the looper
     --config=<config>        - Config set defined in settings (default: default)
@@ -77,6 +82,8 @@ def cli_handler(host="localhost", port=9951, stereo=False,
     # ensure type is correct here
     port = int(port)
     loops = int(loops)
+    if udp_host is not None:
+        settings.UDP_IP_ADDRESS = udp_host
     setup = not nosetup
     set_config(config)
     run_controller(host, port, setup, loops, 2 if stereo else 1)
